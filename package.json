@@ -1,0 +1,45 @@
+{
+  "name": "groomish",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "lint": "eslint .",
+    "test": "mocha --require ts-node/register 'test/**/*.ts'",
+    "test:ci": "mocha --require ts-node/register 'test/**/*.ts' --reporter json --reporter-options output=test-report.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saintedlama/groomish.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saintedlama/groomish/issues"
+  },
+  "homepage": "https://github.com/saintedlama/groomish#readme",
+  "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/debug": "^4.1.7",
+    "@types/mocha": "^9.1.1",
+    "@types/pg": "^8.6.5",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "chai": "^4.3.6",
+    "debug": "^4.3.4",
+    "eslint": "^8.17.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mocha": "^10.0.0",
+    "prettier": "^2.6.2",
+    "typescript": "^4.7.3"
+  },
+  "dependencies": {
+    "ts-node": "^10.8.1"
+  },
+  "peerDependencies": {
+    "pg": ">=8.0.0"
+  }
+}
