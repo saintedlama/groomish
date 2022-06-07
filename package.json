@@ -2,7 +2,7 @@
   "name": "groomish",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "lint": "eslint .",
@@ -34,10 +34,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^10.0.0",
     "prettier": "^2.6.2",
+    "ts-node": "^10.8.1",
     "typescript": "^4.7.3"
-  },
-  "dependencies": {
-    "ts-node": "^10.8.1"
   },
   "peerDependencies": {
     "pg": ">=8.0.0"
