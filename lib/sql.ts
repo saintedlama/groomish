@@ -1,9 +1,9 @@
-export type Insert = {
+export type PreparedStatement = {
   sql: string;
   values: any[];
 };
 
-export function buildInsert<T>(table: string, entity: T): Insert {
+export function buildInsert<T>(table: string, entity: T): PreparedStatement {
   const keys = Object.keys(entity).filter((key) => key != "id");
 
   const values: { key: string; i: number }[] = [];
@@ -24,12 +24,7 @@ export function buildInsert<T>(table: string, entity: T): Insert {
   };
 }
 
-export type Update = {
-  sql: string;
-  values: any[];
-};
-
-export function buildUpdate<T>(table: string, entity: T): Update {
+export function buildUpdate<T>(table: string, entity: T): PreparedStatement {
   const keys = Object.keys(entity).filter((key) => key != "id");
 
   const values: { key: string; i: number }[] = [];
@@ -51,20 +46,10 @@ export function buildUpdate<T>(table: string, entity: T): Update {
     values: values.concat(entity["id" as keyof typeof entity] as any),
   };
 }
-export function buildSelect(table: string, predicates: any, options: any): Update {
-  const keys = Object.keys(predicates);
 
-  const values: { key: string; i: number }[] = [];
-  const sqlValues = [];
-
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = predicates[key as keyof typeof predicates] as any;
-    values.push(value);
-    sqlValues.push({ key, i });
-  }
-
-  let sql = `SELECT * FROM ${table} WHERE ${sqlValues.map((s) => `${escapeColumnName(s.key)}=$${s.i + 1}`).join(" AND ")}`;
+export function buildSelect(table: string, predicates: any, options?: any): PreparedStatement {
+  const whereClause = buildWhereClause(predicates);
+  let sql = `SELECT * FROM ${table} ${whereClause.sql}`;
 
   if (options?.limit) {
     sql += ` LIMIT ${options.limit}`;
@@ -76,6 +61,33 @@ export function buildSelect(table: string, predicates: any, options: any): Updat
 
   return {
     sql,
+    values: whereClause.values,
+  };
+}
+
+export function buildWhereClause(predicates: any) : PreparedStatement {
+  const columns = Object.keys(predicates);
+
+  const values = [];
+  const sqlColumns = [];
+
+  let skippedValues = 0;
+  for (let i = 0; i < columns.length; i++) {
+    const column = columns[i];
+    const value = predicates[column as keyof typeof predicates] as any;
+
+    if (value === null) {
+      skippedValues++;
+
+      sqlColumns.push(`${escapeColumnName(column)} IS NULL`);
+    } else {
+      values.push(value);
+      sqlColumns.push(`${escapeColumnName(column)}=$${i + 1 - skippedValues}`);
+    }
+  }
+
+  return {
+    sql: `WHERE ${sqlColumns.join(" AND ")}`,
     values,
   };
 }

@@ -172,6 +172,19 @@ describe("repository", () => {
       const result = await users.select<UserExtended>({ first_name: "Jane" });
       expect(result.map((user) => user.first_name)).to.deep.equal(["Jane", "Jane"]);
     });
+
+    it("should select entities by predicates containing null values", async () => {
+      await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR, last_name VARCHAR)`);
+
+      const users = connect(client).repository("users");
+      await users.insert({ first_name: "John" });
+      await users.insert({ first_name: "Jane" });
+      await users.insert({ first_name: "Jane", last_name: "Deer" });
+      await users.insert({ first_name: "John", last_name: "Deer" });
+
+      const result = await users.select<UserExtended>({ last_name: null });
+      expect(result.map((user) => user.first_name)).to.deep.equal(["John", "Jane"]);
+    });
   });
 });
 

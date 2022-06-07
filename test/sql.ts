@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { buildInsert, buildUpdate } from "../lib/sql";
+import { buildInsert, buildSelect, buildUpdate, buildWhereClause } from "../lib/sql";
 
 describe("sql", () => {
   describe("buildInsert", () => {
@@ -42,6 +42,40 @@ describe("sql", () => {
 
       expect(update.sql).to.equal(`UPDATE users SET "name"=$1 WHERE "id"=$2`);
       expect(update.values).to.deep.equal(["John", 1]);
+    });
+  });
+
+  describe("buildSelect", () => {
+    it("should add SELECT for table", () => {
+      const preparedStatement = buildSelect("users", {
+        id: 1,
+        name: "John",
+      });
+
+      expect(preparedStatement.sql).to.equal(`SELECT * FROM users WHERE "id"=$1 AND "name"=$2`);
+      expect(preparedStatement.values).to.deep.equal([1, "John"]);
+    });
+  });
+
+  describe("buildWhere", () => {
+    it("should add predicates to AND joined value equality clause", () => {
+      const preparedStatement = buildWhereClause({
+        id: 1,
+        name: "John",
+      });
+
+      expect(preparedStatement.sql).to.equal(`WHERE "id"=$1 AND "name"=$2`);
+      expect(preparedStatement.values).to.deep.equal([1, "John"]);
+    });
+
+    it("should transform null values to IS NULL predicates", () => {
+      const preparedStatement = buildWhereClause({
+        id: null,
+        name: "John",
+      });
+
+      expect(preparedStatement.sql).to.equal(`WHERE "id" IS NULL AND "name"=$1`);
+      expect(preparedStatement.values).to.deep.equal(["John"]);
     });
   });
 });
