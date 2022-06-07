@@ -1,3 +1,5 @@
+import  { Predicates } from "./types";
+
 export type PreparedStatement = {
   sql: string;
   values: any[];
@@ -47,7 +49,7 @@ export function buildUpdate<T>(table: string, entity: T): PreparedStatement {
   };
 }
 
-export function buildSelect(table: string, predicates: any, options?: any): PreparedStatement {
+export function buildSelect(table: string, predicates: Predicates, options?: any): PreparedStatement {
   const whereClause = buildWhereClause(predicates);
   let sql = `SELECT * FROM ${table} ${whereClause.sql}`;
 
@@ -65,7 +67,7 @@ export function buildSelect(table: string, predicates: any, options?: any): Prep
   };
 }
 
-export function buildWhereClause(predicates: any) : PreparedStatement {
+export function buildWhereClause(predicates: Predicates) : PreparedStatement {
   const columns = Object.keys(predicates);
 
   const values = [];

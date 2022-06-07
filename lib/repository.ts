@@ -1,6 +1,7 @@
 import Connection from "./connection";
 import { buildInsert, buildUpdate, buildSelect } from "./sql";
 import log from "./log";
+import { Predicates, SelectOptions } from "./types";
 
 export default class Repository {
   constructor(public connection: Connection, public table: string) {}
@@ -61,7 +62,7 @@ export default class Repository {
     return result[0] as T;
   }
 
-  async select<T>(predicates: any, options?: any): Promise<T[]> {
+  async select<T>(predicates: Predicates, options?: SelectOptions): Promise<T[]> {
     const select = buildSelect(this.table, predicates, options);
     const sql = `${select.sql}`;
     log(`selecting ${this.table} using SQL "${sql}"`);
