@@ -1,12 +1,12 @@
-import  { Predicates } from "./types";
+import { Predicates, RepositoryConventions, SelectOptions } from "./types";
 
 export type PreparedStatement = {
   sql: string;
   values: any[];
 };
 
-export function buildInsert<T>(table: string, entity: T): PreparedStatement {
-  const keys = Object.keys(entity).filter((key) => key != "id");
+export function buildInsert<T>(table: string, conventions: RepositoryConventions, entity: T): PreparedStatement {
+  const keys = Object.keys(entity).filter((key) => (conventions.idColumnAutoIncrement ? key != conventions.idColumn : true));
 
   const values: { key: string; i: number }[] = [];
   const sqlValues = [];
@@ -26,8 +26,8 @@ export function buildInsert<T>(table: string, entity: T): PreparedStatement {
   };
 }
 
-export function buildUpdate<T>(table: string, entity: T): PreparedStatement {
-  const keys = Object.keys(entity).filter((key) => key != "id");
+export function buildUpdate<T>(table: string, conventions: RepositoryConventions, entity: T): PreparedStatement {
+  const keys = Object.keys(entity).filter((key) => key != conventions.idColumn);
 
   const values: { key: string; i: number }[] = [];
   const sqlValues = [];
@@ -43,15 +43,24 @@ export function buildUpdate<T>(table: string, entity: T): PreparedStatement {
   // TODO: threow if no fields found to update
   return {
     sql: `UPDATE ${table} SET ${sqlValues.map((s) => `${escapeColumnName(s.key)}=$${s.i + 1}`).join(", ")} WHERE ${escapeColumnName(
-      "id"
+      conventions.idColumn
     )}=$${sqlValues.length + 1}`,
-    values: values.concat(entity["id" as keyof typeof entity] as any),
+    values: values.concat(entity[conventions.idColumn as keyof typeof entity] as any),
   };
 }
 
-export function buildSelect(table: string, predicates: Predicates, options?: any): PreparedStatement {
+export function buildSelect(table: string, predicates: Predicates, options?: SelectOptions): PreparedStatement {
   const whereClause = buildWhereClause(predicates);
-  let sql = `SELECT * FROM ${table} ${whereClause.sql}`;
+  const sql = `SELECT * FROM ${table} ${whereClause.sql} ${buildSelectOptions(options)}`;
+
+  return {
+    sql: sql.trim(),
+    values: whereClause.values,
+  };
+}
+
+export function buildSelectOptions(options?: SelectOptions): string {
+  let sql = "";
 
   if (options?.limit) {
     sql += ` LIMIT ${options.limit}`;
@@ -61,13 +70,10 @@ export function buildSelect(table: string, predicates: Predicates, options?: any
     sql += ` ORDER BY ${options.orderBy}`;
   }
 
-  return {
-    sql,
-    values: whereClause.values,
-  };
+  return sql.trim();
 }
 
-export function buildWhereClause(predicates: Predicates) : PreparedStatement {
+export function buildWhereClause(predicates: Predicates): PreparedStatement {
   const columns = Object.keys(predicates);
 
   const values = [];

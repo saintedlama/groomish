@@ -4,7 +4,7 @@ import { buildInsert, buildSelect, buildUpdate, buildWhereClause } from "../lib/
 describe("sql", () => {
   describe("buildInsert", () => {
     it("should build an insert statement", () => {
-      const insert = buildInsert("users", {
+      const insert = buildInsert("users", { idColumn: 'id', idColumnAutoIncrement: true }, {
         name: "John",
       });
 
@@ -13,7 +13,7 @@ describe("sql", () => {
     });
 
     it("should omit 'id' fields from insert statements", () => {
-      const insert = buildInsert("users", {
+      const insert = buildInsert("users", { idColumn: 'id', idColumnAutoIncrement: true }, {
         id: 1,
         name: "John",
       });
@@ -25,7 +25,7 @@ describe("sql", () => {
 
   describe("buildUpdate", () => {
     it("should omit 'id' fields from update statements", () => {
-      const insert = buildUpdate("users", {
+      const insert = buildUpdate("users", { idColumn: 'id', idColumnAutoIncrement: true }, {
         id: 1,
         name: "John",
       });
@@ -35,7 +35,7 @@ describe("sql", () => {
     });
 
     it("should build an insert statement", () => {
-      const update = buildUpdate("users", {
+      const update = buildUpdate("users", { idColumn: 'id', idColumnAutoIncrement: true }, {
         name: "John",
         id: 1,
       });
