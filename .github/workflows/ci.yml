@@ -36,6 +36,10 @@ jobs:
 
       - run: npm run lint
       - run: npm run test:coverage
+
+      - name: Dirty sed hack
+        run: sed -i 's/file:\/home\/runner\/work\/groomish\///g' lcov.info
+
       - run: cat coverage/lcov.info
 
       - name: Test Report
