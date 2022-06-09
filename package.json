@@ -7,7 +7,8 @@
     "build": "tsc --project tsconfig.json",
     "lint": "eslint .",
     "test": "mocha --require ts-node/register 'test/**/*.ts'",
-    "test:ci": "mocha --require ts-node/register 'test/**/*.ts' --reporter json --reporter-options output=test-report.json"
+    "test:ci": "mocha --require ts-node/register --require source-map-support/register 'test/**/*.ts' --reporter json --reporter-options output=test-report.json",
+    "test:coverage": "nyc npm run test:ci"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/saintedlama/groomish#readme",
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/chai": "^4.3.1",
     "@types/debug": "^4.1.7",
     "@types/mocha": "^9.1.1",
@@ -33,7 +35,9 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "mocha": "^10.0.0",
+    "nyc": "^15.1.0",
     "prettier": "^2.6.2",
+    "source-map-support": "^0.5.21",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.3"
   },

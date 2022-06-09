@@ -45,4 +45,9 @@ jobs:
           path: test-report.json
           reporter: mocha-json
 
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - run: npm run build
