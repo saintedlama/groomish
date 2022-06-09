@@ -36,6 +36,7 @@ jobs:
 
       - run: npm run lint
       - run: npm run test:coverage
+      - run: cat coverage/lcov.info
 
       - name: Test Report
         uses: dorny/test-reporter@v1
