@@ -39,13 +39,6 @@ jobs:
       - run: npm run lint
       - run: npm run test:coverage
 
-      - name: Dirty sed hack
-        run: sed -i 's/file:\/home\/runner\/work\/groomish\/groomish\///g' coverage/lcov.info
-      - name: Dirty sed hack 2
-        run: sed -i 's/lib\/lib/lib/g' coverage/lcov.info
-
-      - run: cat coverage/lcov.info
-
       - name: Test Report
         uses: dorny/test-reporter@v1
         if: success() || failure()
@@ -53,6 +46,11 @@ jobs:
           name: Tests
           path: test-report.json
           reporter: mocha-json
+
+      - name: Fix file path with sed in lcov files
+        run: sed -i 's/file:\/home\/runner\/work\/groomish\/groomish\///g' coverage/lcov.info
+      - name: Fix file path with sed in lcov files
+        run: sed -i 's/lib\/lib/lib/g' coverage/lcov.info
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
