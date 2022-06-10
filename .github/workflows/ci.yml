@@ -5,6 +5,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 jobs:
@@ -44,6 +46,11 @@ jobs:
           name: Tests
           path: test-report.json
           reporter: mocha-json
+
+      - name: Fix file path with sed in lcov files
+        run: sed -i 's/file:\/home\/runner\/work\/groomish\/groomish\///g' coverage/lcov.info
+      - name: Fix file path with sed in lcov files
+        run: sed -i 's/lib\/lib/lib/g' coverage/lcov.info
 
       - name: Coveralls
         uses: coverallsapp/github-action@master
