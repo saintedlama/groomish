@@ -38,7 +38,7 @@ jobs:
       - run: npm run test:coverage
 
       - name: Dirty sed hack
-        run: sed -i 's/file:\/home\/runner\/work\/groomish\///g' coverage/lcov.info
+        run: sed -i 's/file:\/home\/runner\/work\/groomish\/groomish\///g' coverage/lcov.info
 
       - run: cat coverage/lcov.info
 
