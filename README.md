@@ -1,5 +1,8 @@
 # Groomish
 
+[![CI](https://github.com/saintedlama/groomish/actions/workflows/ci.yml/badge.svg)](https://github.com/saintedlama/groomish/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/saintedlama/groomish/badge.svg?branch=main)](https://coveralls.io/github/saintedlama/groomish?branch=main)
+
 ## 1 minute example
 
 ```js
