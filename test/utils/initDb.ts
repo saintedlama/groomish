@@ -1,10 +1,13 @@
-import { Client } from "pg";
+import pg from "pg";
+import type { Client } from "pg";
 import debug from "debug";
+
+const { Client: PgClient } = pg;
 
 const log = debug("groomish:initDb");
 
 export default async function initDb(): Promise<Client> {
-  const client = new Client({
+  const client = new PgClient({
     user: "postgres",
     database: "postgres",
     password: "postgres",
@@ -23,7 +26,7 @@ export default async function initDb(): Promise<Client> {
   log(`ending postgres connection`);
   await client.end();
 
-  const groomishTestClient = new Client({
+  const groomishTestClient = new PgClient({
     user: "postgres",
     database: "groomish_test",
     password: "postgres",

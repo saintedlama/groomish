@@ -1,7 +1,7 @@
 import { expect } from "chai";
-import connect from "../index";
-import initDb from "./utils/initDb";
-import log from "../lib/log";
+import connect from "../index.js";
+import initDb from "./utils/initDb.js";
+import log from "../lib/log.js";
 import { Client } from "pg";
 
 describe("repository", () => {
