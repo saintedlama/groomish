@@ -1,8 +1,9 @@
 {
   "name": "groomish",
   "version": "1.0.0",
-  "description": "",
+  "description": "Micro ORM for Postgres",
   "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "scripts": {
     "build": "tsc --project tsconfig.json",
@@ -20,6 +21,10 @@
   "bugs": {
     "url": "https://github.com/saintedlama/groomish/issues"
   },
+  "files": [
+    "dist",
+    "**/*.ts"
+  ],
   "homepage": "https://github.com/saintedlama/groomish#readme",
   "devDependencies": {
     "@types/chai": "^4.3.1",
