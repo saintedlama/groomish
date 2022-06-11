@@ -1,7 +1,7 @@
-import Connection from "./connection";
-import { buildInsert, buildUpdate, buildSelect, buildSelectOptions } from "./sql";
-import log from "./log";
-import { Predicates, RepositoryConventions, SelectOptions } from "./types";
+import Connection from "./connection.js";
+import { buildInsert, buildUpdate, buildSelect, buildSelectOptions } from "./sql.js";
+import log from "./log.js";
+import { Predicates, RepositoryConventions, SelectOptions } from "./types.js";
 
 export default class Repository {
   constructor(

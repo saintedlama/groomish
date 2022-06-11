@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { buildInsert, buildSelect, buildUpdate, buildWhereClause } from "../lib/sql";
+import { buildInsert, buildSelect, buildUpdate, buildWhereClause } from "../lib/sql.js";
 
 describe("sql", () => {
   describe("buildInsert", () => {

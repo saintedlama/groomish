@@ -1,4 +1,4 @@
-import { Predicates, RepositoryConventions, SelectOptions } from "./types";
+import { Predicates, RepositoryConventions, SelectOptions } from "./types.js";
 
 export type PreparedStatement = {
   sql: string;

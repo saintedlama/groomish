@@ -1,6 +1,6 @@
 import { Pool, Client } from "pg";
-import Repository from "./repository";
-import { ConnectionConventions, RepositoryConventions } from "./types";
+import Repository from "./repository.js";
+import { ConnectionConventions, RepositoryConventions } from "./types.js";
 
 export default class Connection {
   public conventions: ConnectionConventions;
