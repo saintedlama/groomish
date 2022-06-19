@@ -9,7 +9,7 @@ export default class Connection {
     this.conventions = conventions || { idColumn: "id", idColumnAutoIncrement: true };
   }
 
-  repository(table: string, conventions?: RepositoryConventions): Repository {
-    return new Repository(this, table, conventions || this.conventions);
+  repository<T>(table: string, conventions?: RepositoryConventions): Repository<T> {
+    return new Repository<T>(this, table, conventions || this.conventions);
   }
 }
