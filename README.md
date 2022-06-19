@@ -34,7 +34,7 @@ async function demo() {
   await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR, last_name VARCHAR)`);
 
   // Let's start working with groomish - use the client and create a users repository
-  const users = groomish(client).repository("users");
+  const users = groomish(client).repository<User>("users");
 
   const john = await users.insert({ first_name: "John", last_name: "Doe" });
   const jane = await users.insert({ first_name: "Jane", last_name: "Doe" });
