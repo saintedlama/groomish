@@ -95,7 +95,7 @@ describe("repository", () => {
     it("should get an entity by id", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<User>("users");
       const user = {
         name: "John Doe",
       } as User;
@@ -127,7 +127,7 @@ describe("repository", () => {
     it("should get an entity by id specified in conventions", async () => {
       await client.query(`CREATE TABLE users (key SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users", { idColumn: "key", idColumnAutoIncrement: true });
+      const users = connect(client).repository<UserWithKey>("users", { idColumn: "key", idColumnAutoIncrement: true });
       const user = {
         name: "John Doe",
       } as UserWithKey;
@@ -147,7 +147,7 @@ describe("repository", () => {
     it("should update an entity by id", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<User>("users");
       const user = {
         name: "John Doe",
       } as User;
@@ -166,7 +166,7 @@ describe("repository", () => {
     it("should update an entity by the id specified in conventions", async () => {
       await client.query(`CREATE TABLE users (key SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users", { idColumn: "key", idColumnAutoIncrement: true });
+      const users = connect(client).repository<UserWithKey>("users", { idColumn: "key", idColumnAutoIncrement: true });
       const user = {
         name: "John Doe",
       } as User;
@@ -185,7 +185,7 @@ describe("repository", () => {
     it("should update an entity by the id specified in conventions if auto increment set to false", async () => {
       await client.query(`CREATE TABLE users (key VARCHAR PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users", { idColumn: "key", idColumnAutoIncrement: false });
+      const users = connect(client).repository<UserWithKey>("users", { idColumn: "key", idColumnAutoIncrement: false });
       const user = {
         key: "jdoe",
         name: "John Doe",
@@ -205,7 +205,7 @@ describe("repository", () => {
     it("should throw if entity to update was not found", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<User>("users");
 
       try {
         await users.update({ id: 1, name: "John Doe" });
@@ -221,7 +221,7 @@ describe("repository", () => {
     it("should delete an entity", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<User>("users");
       const user = {
         name: "John Doe",
       } as User;
@@ -235,7 +235,7 @@ describe("repository", () => {
     it("should delete an entity by id specified in conventions", async () => {
       await client.query(`CREATE TABLE users (key SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users", { idColumn: "key", idColumnAutoIncrement: true });
+      const users = connect(client).repository<UserWithKey>("users", { idColumn: "key", idColumnAutoIncrement: true });
       const user = {
         name: "John Doe",
       } as UserWithKey;
@@ -249,10 +249,54 @@ describe("repository", () => {
     it("should throw if entity to delete was not found", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<User>("users");
 
       try {
-        await users.delete({ id: 1 });
+        await users.delete({ id: 1, name: "empty" });
+        expect.fail("expected delete call of non persisted user to throw");
+      } catch (e) {
+        log(e);
+        // success
+      }
+    });
+  });
+
+  describe("deleteById", () => {
+    it("should delete an entity", async () => {
+      await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
+
+      const users = connect(client).repository<User>("users");
+      const user = {
+        name: "John Doe",
+      } as User;
+
+      const result = await users.insert(user);
+
+      const deletedUser = await users.deleteById(result.id);
+      expect(deletedUser).to.deep.equal(result);
+    });
+
+    it("should delete an entity by id specified in conventions", async () => {
+      await client.query(`CREATE TABLE users (key SERIAL PRIMARY KEY, name VARCHAR)`);
+
+      const users = connect(client).repository<UserWithKey>("users", { idColumn: "key", idColumnAutoIncrement: true });
+      const user = {
+        name: "John Doe",
+      } as UserWithKey;
+
+      const result = await users.insert(user);
+
+      const deletedUser = await users.deleteById(result.key);
+      expect(deletedUser).to.deep.equal(result);
+    });
+
+    it("should throw if entity to delete was not found", async () => {
+      await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR)`);
+
+      const users = connect(client).repository<User>("users");
+
+      try {
+        await users.deleteById(1);
         expect.fail("expected delete call of non persisted user to throw");
       } catch (e) {
         log(e);
@@ -265,26 +309,54 @@ describe("repository", () => {
     it("should select all entities by predicates", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR, last_name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<UserExtended>("users");
       await users.insert({ first_name: "John", last_name: "Doe" });
       await users.insert({ first_name: "Jane", last_name: "Doe" });
       await users.insert({ first_name: "Jane", last_name: "Deer" });
       await users.insert({ first_name: "John", last_name: "Deer" });
 
-      const result = await users.select<UserExtended>({ first_name: "Jane" });
+      const result = await users.select({ first_name: "Jane" });
       expect(result.map((user) => user.first_name)).to.deep.equal(["Jane", "Jane"]);
     });
 
     it("should select entities by predicates containing null values", async () => {
       await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR, last_name VARCHAR)`);
 
-      const users = connect(client).repository("users");
+      const users = connect(client).repository<UserExtended>("users");
       await users.insert({ first_name: "John" });
       await users.insert({ first_name: "Jane" });
       await users.insert({ first_name: "Jane", last_name: "Deer" });
       await users.insert({ first_name: "John", last_name: "Deer" });
 
-      const result = await users.select<UserExtended>({ last_name: null });
+      const result = await users.select({ last_name: null });
+      expect(result.map((user) => user.first_name)).to.deep.equal(["John", "Jane"]);
+    });
+  });
+
+  describe("selectWhere", () => {
+    it("should select all entities by where clause with parameters given", async () => {
+      await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR, last_name VARCHAR)`);
+
+      const users = connect(client).repository<UserExtended>("users");
+      await users.insert({ first_name: "John", last_name: "Doe" });
+      await users.insert({ first_name: "Jane", last_name: "Doe" });
+      await users.insert({ first_name: "Jane", last_name: "Deer" });
+      await users.insert({ first_name: "John", last_name: "Deer" });
+
+      const result = await users.selectWhere("first_name != $1", ["Jane"]);
+      expect(result.map((user) => user.first_name)).to.deep.equal(["John", "John"]);
+    });
+
+    it("should select all entities by where with empty parameters", async () => {
+      await client.query(`CREATE TABLE users (id SERIAL PRIMARY KEY, first_name VARCHAR, last_name VARCHAR)`);
+
+      const users = connect(client).repository<UserExtended>("users");
+      await users.insert({ first_name: "John" });
+      await users.insert({ first_name: "Jane" });
+      await users.insert({ first_name: "Jane", last_name: "Deer" });
+      await users.insert({ first_name: "John", last_name: "Deer" });
+
+      const result = await users.selectWhere("last_name IS NULL");
       expect(result.map((user) => user.first_name)).to.deep.equal(["John", "Jane"]);
     });
   });
@@ -297,8 +369,8 @@ type User = {
 
 type UserExtended = {
   id?: number;
-  first_name: string;
-  last_name: string;
+  first_name?: string;
+  last_name?: string;
 };
 
 type UserWithKey = {
