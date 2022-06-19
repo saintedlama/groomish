@@ -5,4 +5,8 @@ image:
   file: .gitpod.dockerfile
 
 tasks:
-  - init: npm install && npm run build
+  - name: install
+    init: npm ci
+
+  - name: env
+    before: export PGUSER=gitpod
