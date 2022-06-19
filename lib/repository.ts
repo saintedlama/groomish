@@ -3,7 +3,7 @@ import { buildInsert, buildUpdate, buildSelect, buildSelectOptions } from "./sql
 import log from "./log.js";
 import { RepositoryConventions, SelectOptions } from "./types.js";
 
-export default class Repository<T> {
+export class Repository<T> {
   constructor(
     public connection: Connection,
     public table: string,
@@ -70,7 +70,7 @@ export default class Repository<T> {
     return result[0];
   }
 
-  async select(predicates: { [property in keyof T]: unknown }, options?: SelectOptions): Promise<T[]> {
+  async select(predicates: { [property in keyof T]+?: unknown }, options?: SelectOptions): Promise<T[]> {
     const select = buildSelect(this.table, predicates, options);
     const sql = `${select.sql}`;
     log(`selecting ${this.table} using SQL "${sql}"`);

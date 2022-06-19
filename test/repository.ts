@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import connect from "../index.js";
+import { connect } from "../index.js";
 import initDb from "./utils/initDb.js";
 import log from "../lib/log.js";
 import { Client } from "pg";

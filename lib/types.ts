@@ -8,4 +8,10 @@ export type RepositoryConventions = {
   idColumnAutoIncrement: boolean;
 };
 
+export type PreparedStatement = {
+  sql: string;
+  values: unknown[];
+};
+
+
 export type ConnectionConventions = RepositoryConventions;
