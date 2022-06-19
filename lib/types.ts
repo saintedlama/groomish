@@ -3,8 +3,6 @@ export type SelectOptions = {
   orderBy?: string;
 };
 
-export type Predicates = { [key: string]: any };
-
 export type RepositoryConventions = {
   idColumn: string;
   idColumnAutoIncrement: boolean;

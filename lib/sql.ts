@@ -1,4 +1,4 @@
-import { Predicates, RepositoryConventions, SelectOptions } from "./types.js";
+import { RepositoryConventions, SelectOptions } from "./types.js";
 
 export type PreparedStatement = {
   sql: string;
@@ -49,7 +49,7 @@ export function buildUpdate<T>(table: string, conventions: RepositoryConventions
   };
 }
 
-export function buildSelect(table: string, predicates: Predicates, options?: SelectOptions): PreparedStatement {
+export function buildSelect(table: string, predicates: { [key: string]: unknown }, options?: SelectOptions): PreparedStatement {
   const whereClause = buildWhereClause(predicates);
   const sql = `SELECT * FROM ${table} ${whereClause.sql} ${buildSelectOptions(options)}`;
 
@@ -73,7 +73,7 @@ export function buildSelectOptions(options?: SelectOptions): string {
   return sql.trim();
 }
 
-export function buildWhereClause(predicates: Predicates): PreparedStatement {
+export function buildWhereClause(predicates: { [key: string]: unknown },): PreparedStatement {
   const columns = Object.keys(predicates);
 
   const values = [];
