@@ -3,7 +3,17 @@
 [![CI](https://github.com/saintedlama/groomish/actions/workflows/ci.yml/badge.svg)](https://github.com/saintedlama/groomish/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/saintedlama/groomish/badge.svg?branch=main)](https://coveralls.io/github/saintedlama/groomish?branch=main)
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/saintedlama/groomish/tree/main)
+
 ## 1 minute example
+
+Install latest `pg` peer dependency and `groomish`
+
+```shell
+npm i pg groomish
+```
+
+Start working with a repository
 
 ```js
 import { Client } from "pg";
@@ -42,5 +52,4 @@ async function demo() {
   const toDelete = await users.get(jane.id);
   await users.delete(toDelete);
 }
-
 ```
