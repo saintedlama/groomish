@@ -1,9 +1,9 @@
 import Connection from "./connection.js";
 import { buildInsert, buildUpdate, buildSelect, buildSelectOptions } from "./sql.js";
 import log from "./log.js";
-import { Predicates, RepositoryConventions, SelectOptions } from "./types.js";
+import { RepositoryConventions, SelectOptions } from "./types.js";
 
-export default class Repository<T> {
+export class Repository<T> {
   constructor(
     public connection: Connection,
     public table: string,
@@ -24,7 +24,7 @@ export default class Repository<T> {
     return result[0] as T;
   }
 
-  async get(id: any): Promise<T> {
+  async get(id: unknown): Promise<T> {
     // TODO: move to sql.ts
     const sql = `SELECT * FROM ${this.table} WHERE ${this.conventions.idColumn} = $1`;
     log(`getting from ${this.table} using SQL "${sql}"`);
@@ -54,10 +54,10 @@ export default class Repository<T> {
 
   async delete(entity: T): Promise<T> {
     // TODO: move to sql.ts
-    return await this.deleteById(entity[this.conventions.idColumn as keyof typeof entity] as any);
+    return await this.deleteById(entity[this.conventions.idColumn as keyof T]);
   }
 
-  async deleteById(id: any): Promise<T> {
+  async deleteById(id: unknown): Promise<T> {
     const sql = `DELETE FROM ${this.table} WHERE ${this.conventions.idColumn} = $1 RETURNING *`;
 
     log(`deleting from ${this.table} using SQL "${sql}"`);
@@ -70,21 +70,21 @@ export default class Repository<T> {
     return result[0];
   }
 
-  async select(predicates: Predicates, options?: SelectOptions): Promise<T[]> {
+  async select(predicates: { [property in keyof T]+?: unknown }, options?: SelectOptions): Promise<T[]> {
     const select = buildSelect(this.table, predicates, options);
     const sql = `${select.sql}`;
     log(`selecting ${this.table} using SQL "${sql}"`);
     return await this.query(sql, select.values);
   }
 
-  async selectWhere(whereClause: string, params?: any[], options?: SelectOptions): Promise<T[]> {
+  async selectWhere(whereClause: string, params?: unknown[], options?: SelectOptions): Promise<T[]> {
     // TODO: Move to sql.ts
     const sql = `SELECT * FROM ${this.table} WHERE ${whereClause} ${buildSelectOptions(options)}`;
     log(`selecting ${this.table} using SQL "${sql}"`);
     return await this.query(sql, params || []);
   }
 
-  async query(query: string, params: any[]): Promise<T[]> {
+  async query(query: string, params: unknown[]): Promise<T[]> {
     const result = await this.connection.pg.query(query, params);
     return result.rows as T[];
   }

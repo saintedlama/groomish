@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { buildInsert, buildSelect, buildUpdate, buildWhereClause } from "../lib/sql.js";
+import { buildInsert, buildSelect, buildSelectOptions, buildUpdate, buildWhereClause } from "../lib/sql.js";
 
 describe("sql", () => {
   describe("buildInsert", () => {
@@ -76,6 +76,24 @@ describe("sql", () => {
 
       expect(preparedStatement.sql).to.equal(`WHERE "id" IS NULL AND "name"=$1`);
       expect(preparedStatement.values).to.deep.equal(["John"]);
+    });
+  });
+
+  describe("buildSelectOptions", () => {
+    it("should build limit clause", () => {
+      const optionsString = buildSelectOptions({
+        limit: 10,
+      });
+
+      expect(optionsString).to.equal(`LIMIT 10`);
+    });
+
+    it("should build oderBy clause", () => {
+      const optionsString = buildSelectOptions({
+        orderBy: "last_name DESC",
+      });
+
+      expect(optionsString).to.equal(`ORDER BY last_name DESC`);
     });
   });
 });

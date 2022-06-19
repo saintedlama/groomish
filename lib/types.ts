@@ -3,11 +3,15 @@ export type SelectOptions = {
   orderBy?: string;
 };
 
-export type Predicates = { [key: string]: any };
-
 export type RepositoryConventions = {
   idColumn: string;
   idColumnAutoIncrement: boolean;
 };
+
+export type PreparedStatement = {
+  sql: string;
+  values: unknown[];
+};
+
 
 export type ConnectionConventions = RepositoryConventions;

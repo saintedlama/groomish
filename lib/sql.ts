@@ -1,9 +1,4 @@
-import { Predicates, RepositoryConventions, SelectOptions } from "./types.js";
-
-export type PreparedStatement = {
-  sql: string;
-  values: any[];
-};
+import { PreparedStatement, RepositoryConventions, SelectOptions } from "./types.js";
 
 export function buildInsert<T>(table: string, conventions: RepositoryConventions, entity: T): PreparedStatement {
   const keys = Object.keys(entity).filter((key) => (conventions.idColumnAutoIncrement ? key != conventions.idColumn : true));
@@ -13,7 +8,7 @@ export function buildInsert<T>(table: string, conventions: RepositoryConventions
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    const value = entity[key as keyof typeof entity] as any;
+    const value = entity[key as keyof T] as any;
     values.push(value);
     sqlValues.push({ key, i });
   }
@@ -34,7 +29,7 @@ export function buildUpdate<T>(table: string, conventions: RepositoryConventions
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    const value = entity[key as keyof typeof entity] as any;
+    const value = entity[key as keyof T] as any;
     values.push(value);
     sqlValues.push({ key, i });
   }
@@ -45,11 +40,11 @@ export function buildUpdate<T>(table: string, conventions: RepositoryConventions
     sql: `UPDATE ${table} SET ${sqlValues.map((s) => `${escapeColumnName(s.key)}=$${s.i + 1}`).join(", ")} WHERE ${escapeColumnName(
       conventions.idColumn
     )}=$${sqlValues.length + 1}`,
-    values: values.concat(entity[conventions.idColumn as keyof typeof entity] as any),
+    values: values.concat(entity[conventions.idColumn as keyof T] as any),
   };
 }
 
-export function buildSelect(table: string, predicates: Predicates, options?: SelectOptions): PreparedStatement {
+export function buildSelect(table: string, predicates: { [key: string]: unknown }, options?: SelectOptions): PreparedStatement {
   const whereClause = buildWhereClause(predicates);
   const sql = `SELECT * FROM ${table} ${whereClause.sql} ${buildSelectOptions(options)}`;
 
@@ -73,7 +68,7 @@ export function buildSelectOptions(options?: SelectOptions): string {
   return sql.trim();
 }
 
-export function buildWhereClause(predicates: Predicates): PreparedStatement {
+export function buildWhereClause(predicates: { [key: string]: unknown },): PreparedStatement {
   const columns = Object.keys(predicates);
 
   const values = [];
@@ -82,7 +77,7 @@ export function buildWhereClause(predicates: Predicates): PreparedStatement {
   let skippedValues = 0;
   for (let i = 0; i < columns.length; i++) {
     const column = columns[i];
-    const value = predicates[column as keyof typeof predicates] as any;
+    const value = predicates[column as keyof typeof predicates] as unknown;
 
     if (value === null) {
       skippedValues++;
