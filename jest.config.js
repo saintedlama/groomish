@@ -1,6 +1,5 @@
 export default {
-  // [...]
-  preset: "ts-jest/presets/default-esm", // or other ESM presets
+  preset: "ts-jest/presets/default-esm",
   globals: {
     "ts-jest": {
       useESM: true,
@@ -10,7 +9,7 @@ export default {
     "^(\\.{1,2}/.*)\\.js$": "$1",
   },
   testMatch: ["**/test/**/*.ts"],
-  testPathIgnorePatterns: ["/node_modules/", "/utils/"],
+  testPathIgnorePatterns: ["/node_modules/", "/utils/", "/dist/"],
 
   collectCoverage: true,
   coveragePathIgnorePatterns: ["/node_modules/", "/utils/"],
