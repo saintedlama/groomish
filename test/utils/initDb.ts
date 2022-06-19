@@ -8,10 +8,10 @@ const log = debug("groomish:initDb");
 
 export default async function initDb(): Promise<Client> {
   const client = new PgClient({
-    user: "postgres",
-    database: "postgres",
-    password: "postgres",
-    host: "localhost",
+    user: process.env.PGUSER || "postgres",
+    password: process.env.PGPASSWORD || "postgres",
+    database: process.env.PGDATABASE || "postgres",
+    host: process.env.PGHOSTADDR || "localhost",
   });
 
   log(`connecting to postgres`);
@@ -27,10 +27,10 @@ export default async function initDb(): Promise<Client> {
   await client.end();
 
   const groomishTestClient = new PgClient({
-    user: "postgres",
+    user: process.env.PGUSER || "postgres",
+    password: process.env.PGPASSWORD || "postgres",
     database: "groomish_test",
-    password: "postgres",
-    host: "localhost",
+    host: process.env.PGHOSTADDR || "localhost",
   });
 
   await groomishTestClient.connect();

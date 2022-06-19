@@ -11,7 +11,7 @@ describe("repository", () => {
     client = await initDb();
   });
 
-  afterEach(async () => await client.end());
+  afterEach(async () => await client?.end());
 
   describe("insert", () => {
     it("should insert an entity without id", async () => {
